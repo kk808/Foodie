@@ -49,6 +49,13 @@ Record of what's been completed so far, for context in future sessions. See
   - `apps/foodie-web/src/app/layout.tsx` used `React.ReactNode` without importing `React` — worked under the old (nonexistent) lint setup, caught immediately once real linting ran. Fixed to `import type { ReactNode } from "react"`.
 - Full verification after every fix: clean install → build → typecheck → lint → test, all 6 workspace packages, from a completely fresh `/tmp` scratch copy (not incremental/cached)
 
+## Storybook 8.6 → 10.5 upgrade (post-Phase 2)
+
+- Bumped `storybook`, `@storybook/react`, `@storybook/react-vite`, `@storybook/addon-a11y` to `10.5.4` (all pinned to the exact same version — learned that lesson the hard way earlier, see version-drift note above)
+- Removed `@storybook/addon-essentials` entirely — it was removed as a package in Storybook 9 (docs/controls/actions/viewport/etc. all moved into core), so declaring it as a dependency or listing it in `.storybook/main.ts`'s `addons` array would now just be dead weight
+- Bonus: the persistent `Foundations.stories.mdx` "No matching indexer found" warning (the dead leftover file from Phase 2 that couldn't be deleted from the sandbox's FUSE mount) is gone under Storybook 10 — build and dev server both come up completely clean now
+- Verified: full build, `storybook dev` startup (`Storybook ready!` banner), typecheck, lint, and tests all pass clean from a fresh install
+
 ## Notes on verification process
 
 The mounted project folder (`D:\wh\github\Foodie`) is on a filesystem that doesn't support the file operations `pnpm install` needs (FUSE mount, fails on `unlink`). All installs/builds were verified by copying the repo to `/tmp` in the sandbox, running `pnpm install && pnpm build` there, then copying corrected source back — never node_modules/dist. If build issues show up in a future session, this is why: verification happens in a scratch copy, not the mounted folder directly.
