@@ -5,14 +5,14 @@
 - [x] Phase 0 — Monorepo scaffold (Turborepo + pnpm), tooling config, CI skeleton — no registry setup
 - [x] Phase 1 — `@foodie/tokens` built and consumed locally via `workspace:*`
 - [x] Phase 2 — `@foodie/ui` primitives (Button, TextField) + Storybook live
-- [ ] Phase 3 — Composite + pattern components (StatTile, StarRating, StepProgress, DiscoveryListItem)
+- [x] Phase 3 — Composite + pattern components (StatTile, StarRating, StepProgress, DiscoveryListItem)
 - [ ] Phase 4 — Layout helpers (ScreenShell, FlowHeader); Code Connect mapping to Figma
 - [ ] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
 - [ ] Phase 6 — Steps 1–5 flow built, wired to local state
 - [ ] Phase 7 — Accessibility + visual regression hardening, v1.0 tag (still unpublished)
 - [ ] Trigger-based (not scheduled) — stand up private registry + Changesets publish job once app #2 needs `@foodie/ui`/`@foodie/tokens` externally
 
-See `DONE.md` for details on what Phases 0, 1, and 2 actually involved.
+See `DONE.md` for details on what Phases 0–3 actually involved.
 
 ---
 
@@ -50,6 +50,15 @@ Tailwind's stock palette instead of erroring, which could confuse someone
 reaching for a shade outside what Figma defines. Not a bug in anything built
 so far (only the defined shades are used), but worth a naming pass
 (e.g. prefixing) if it ever causes real confusion.
+
+## DiscoveryListItem icon content (Phase 3)
+
+The Figma file's Discovery List Item (node `5:54`) has just a plain colored
+square in the icon slot — no glyph, emoji, or photo. `DiscoveryListItem`'s
+`icon` prop accepts an optional `ReactNode` for this reason, but nothing
+renders there by default. Once the design defines what actually goes in that
+slot (food category icon? photo thumbnail?), wire the real default in
+(`packages/ui/src/components/DiscoveryListItem.tsx`).
 
 ## Sync workflow (build plan §2)
 

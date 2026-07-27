@@ -49,6 +49,12 @@ Record of what's been completed so far, for context in future sessions. See
   - `apps/foodie-web/src/app/layout.tsx` used `React.ReactNode` without importing `React` — worked under the old (nonexistent) lint setup, caught immediately once real linting ran. Fixed to `import type { ReactNode } from "react"`.
 - Full verification after every fix: clean install → build → typecheck → lint → test, all 6 workspace packages, from a completely fresh `/tmp` scratch copy (not incremental/cached)
 
+## Bug fixes reported by the user (post-Phase 2)
+
+- **`turbo.json`'s `storybook` and `dev` tasks never declared `dependsOn: ["^build"]`.** On a fresh clone (`pnpm install` then straight to `pnpm run storybook`, no `pnpm run build` first), Storybook failed with `Failed to resolve entry for package "@foodie/ui"` because `packages/ui`/`packages/tokens` had no `dist/` yet — `foodie-web`'s `dev` task had the identical latent bug, just hadn't been hit. Fixed by adding the dependency to both tasks.
+- **Button height/border bug.** `Button` had a permanent 3px transparent border (reserving space so focus wouldn't shift layout), which added 6px to every button's height — Figma's actual Default/Hover/Disabled frames have no border at all (52px tall: `py-lg` × 2 + 20px line-height). Fixed by dropping the border entirely and switching the focus treatment to `outline` instead of `border` — same visual ring, but outline sits outside the box and never affects size, so focus doesn't resize the button either (Figma's own Focus frame does grow via a real border, which is fine for a static frame but would cause a layout jump in a real interactive button).
+- **Storybook `addon-essentials` version drift** (`8.6.14` vs. `8.6.18` for the rest of Storybook) was suspected as the cause of a persistent `Foundations.stories.mdx` "No matching indexer found" warning. Pinning exact matching versions fixed the drift warning but *not* the indexer warning — turned out to be unrelated (see below, fixed by the v10 upgrade instead).
+
 ## Storybook 8.6 → 10.5 upgrade (post-Phase 2)
 
 - Bumped `storybook`, `@storybook/react`, `@storybook/react-vite`, `@storybook/addon-a11y` to `10.5.4` (all pinned to the exact same version — learned that lesson the hard way earlier, see version-drift note above)
@@ -56,12 +62,28 @@ Record of what's been completed so far, for context in future sessions. See
 - Bonus: the persistent `Foundations.stories.mdx` "No matching indexer found" warning (the dead leftover file from Phase 2 that couldn't be deleted from the sandbox's FUSE mount) is gone under Storybook 10 — build and dev server both come up completely clean now
 - Verified: full build, `storybook dev` startup (`Storybook ready!` banner), typecheck, lint, and tests all pass clean from a fresh install
 
+## Phase 3 — Composite + pattern components
+
+Pulled exact structure from Figma before writing any code: Stat Tile (nodes
+`5:2`/`5:5`/`5:8`, one per color), Star Rating (`5:13` rating=0, `5:19`
+rating=1, to see the filled-vs-empty star assets), Progress Step Bar
+(`5:73` step=1, `5:79` step=2), Discovery List Item (`5:54`, already pulled
+in Phase 1 for the Shadow/Card token).
+
+- `StatTile` (`packages/ui/src/components/StatTile.tsx`): 3 color variants (teal/orange/pink), 104×76px, `p-md` (Figma uses 12px here, not the 16px `p-lg` Button uses — easy to get wrong copying between components, double-checked against the actual pulled structure)
+- `StarRating` (`StarRating.tsx`): Figma exports the star as an *image* asset hosted on a temporary 7-day Figma URL — not something to embed in real code, so this renders an inline SVG star instead, toggling color between the `rating-star` (filled) and `border-subtle` (empty) tokens. Supports `readOnly` (default, renders as a single `role="img"` with a computed label) and interactive mode (`onChange` renders 5 `role="radio"` buttons, keyboard-focusable with the same outline treatment as Button)
+- `StepProgress` (`StepProgress.tsx`): segmented bar, `role="progressbar"` with real `aria-valuenow`/`aria-valuemax`, segments up to `currentStep` filled with `brand-primary`, rest `border-subtle`
+- `DiscoveryListItem` (`DiscoveryListItem.tsx`): composes `StarRating` internally; `w-full` instead of Figma's fixed 360px frame width (same reasoning as `TextField` in Phase 2 — a card should size to its container). Figma's icon slot is a plain colored square with no glyph, so `icon` is an optional `ReactNode` prop with nothing rendered by default (see TODO.md)
+- All four exported from `packages/ui/src/index.ts`; Storybook stories added for each (`Composite/StatTile`, `Composite/StarRating`, `Composite/StepProgress`, `Pattern/DiscoveryListItem`) with controls mirroring the Figma variant matrix
+- 16 new vitest tests across the 4 components (rendering, variant classes, ARIA attributes, the `StarRating` interactive click path via `@testing-library/user-event` — added as a new devDependency)
+- No new bugs surfaced this phase — full verification (install → test → typecheck → lint → build, including the Storybook production build) passed clean on the first attempt after writing the components, unlike every previous phase
+
 ## Notes on verification process
 
 The mounted project folder (`D:\wh\github\Foodie`) is on a filesystem that doesn't support the file operations `pnpm install` needs (FUSE mount, fails on `unlink`). All installs/builds were verified by copying the repo to `/tmp` in the sandbox, running `pnpm install && pnpm build` there, then copying corrected source back — never node_modules/dist. If build issues show up in a future session, this is why: verification happens in a scratch copy, not the mounted folder directly.
 
 ## Deferred / not done
 
-See `TODO.md` for the full list (sync workflow, eslint-config-next, TextField error styling, Tailwind color-naming collision). Also not yet done, lower priority:
+See `TODO.md` for the full list (sync workflow, eslint-config-next, TextField error styling, Tailwind color-naming collision, DiscoveryListItem icon content). Also not yet done, lower priority:
 
 - Dark mode token collection (plan says the pipeline extends cleanly to it later, not attempted)
