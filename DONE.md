@@ -78,12 +78,34 @@ in Phase 1 for the Shadow/Card token).
 - 16 new vitest tests across the 4 components (rendering, variant classes, ARIA attributes, the `StarRating` interactive click path via `@testing-library/user-event` — added as a new devDependency)
 - No new bugs surfaced this phase — full verification (install → test → typecheck → lint → build, including the Storybook production build) passed clean on the first attempt after writing the components, unlike every previous phase
 
+## Phase 4 — Layout helpers + Code Connect
+
+Pulled the Screens page from Figma (`1:54` — not visible via the no-arg
+`get_metadata` page listing, same intermittent issue as Phase 1; found by
+guessing the sequential node id `1:54` right after Foundations `1:52` and
+Components `1:53`) to see how Home and the 5 flow-step frames are actually
+built, before writing either component.
+
+- `FlowHeader` (`packages/ui/src/components/FlowHeader.tsx`): the close button + `StepProgress` row plus "Step X of 5" caption that appears identically on all 5 flow screens (e.g. node `7:37` + `7:45`). Composes the existing `StepProgress` rather than reimplementing the segmented bar. `onClose` is optional; the close button gets the same `outline`-based focus treatment as `Button`/`StarRating`. Exported from `packages/ui/src/index.ts`; `Layout/FlowHeader` Storybook story added
+- `ScreenShell` (the 390px mobile frame every screen shares) was originally built as a `@foodie/ui` component, then **moved to `apps/foodie-web/src/components/ScreenShell.tsx`** after review: it's an app page-frame concern (viewport width, route-level background), not a reusable design-system primitive another app would want — unlike `FlowHeader`, which is a genuine composed UI pattern. The vertical rhythm still varies by a `variant: "home" | "flow"` prop (Home node `6:9`: `pt-[60px]`/`gap-lg`/`items-start`; flow steps e.g. `7:36`: `pt-[50px]`/`gap-xl`/`items-center`). The old `packages/ui` copy (component, test, Storybook story) couldn't be deleted from the FUSE-mounted folder, so those three files are neutralized dead leftovers now (same limitation as `Foundations.stories.mdx` in Phase 2) — `ScreenShell.stories.tsx` was repurposed into a local Storybook-only "staging frame" so `FlowHeader`/`StatTile`/etc. compositions are still visually checkable in Storybook without a real `ScreenShell` export
+- 6 new vitest tests for `FlowHeader` (close callback, step label, custom `totalSteps`, progress ARIA) — 22 total across the package, all passing
+- Full verification (install → build → test → typecheck → lint, all 6 workspace packages) passed clean from a fresh `/tmp` scratch copy, both before and after the `ScreenShell` move
+
+**Figma Code Connect mapping — blocked, not done.** Every Code Connect MCP
+tool (`add_code_connect_map`, `get_context_for_code_connect`,
+`get_code_connect_suggestions`) returned the same error regardless of which
+component node was targeted: *"You need a Dev or Full seat on an
+Organization or Enterprise plan to use Code Connect."* This is a Figma
+account/team plan restriction, not a code or config issue — nothing to fix
+from this repo. The intended mapping (component → Figma node) is recorded in
+`TODO.md` so it's a five-minute job once the plan/seat allows it.
+
 ## Notes on verification process
 
 The mounted project folder (`D:\wh\github\Foodie`) is on a filesystem that doesn't support the file operations `pnpm install` needs (FUSE mount, fails on `unlink`). All installs/builds were verified by copying the repo to `/tmp` in the sandbox, running `pnpm install && pnpm build` there, then copying corrected source back — never node_modules/dist. If build issues show up in a future session, this is why: verification happens in a scratch copy, not the mounted folder directly.
 
 ## Deferred / not done
 
-See `TODO.md` for the full list (sync workflow, eslint-config-next, TextField error styling, Tailwind color-naming collision, DiscoveryListItem icon content). Also not yet done, lower priority:
+See `TODO.md` for the full list (sync workflow, eslint-config-next, TextField error styling, Tailwind color-naming collision, DiscoveryListItem icon content, Figma Code Connect mapping — blocked on plan/seat). Also not yet done, lower priority:
 
 - Dark mode token collection (plan says the pipeline extends cleanly to it later, not attempted)

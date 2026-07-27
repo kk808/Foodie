@@ -6,13 +6,13 @@
 - [x] Phase 1 — `@foodie/tokens` built and consumed locally via `workspace:*`
 - [x] Phase 2 — `@foodie/ui` primitives (Button, TextField) + Storybook live
 - [x] Phase 3 — Composite + pattern components (StatTile, StarRating, StepProgress, DiscoveryListItem)
-- [ ] Phase 4 — Layout helpers (ScreenShell, FlowHeader); Code Connect mapping to Figma
+- [x] Phase 4 — Layout helpers (FlowHeader in `@foodie/ui`, ScreenShell in `foodie-web`); Code Connect mapping to Figma (mapping blocked — see below)
 - [ ] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
 - [ ] Phase 6 — Steps 1–5 flow built, wired to local state
 - [ ] Phase 7 — Accessibility + visual regression hardening, v1.0 tag (still unpublished)
 - [ ] Trigger-based (not scheduled) — stand up private registry + Changesets publish job once app #2 needs `@foodie/ui`/`@foodie/tokens` externally
 
-See `DONE.md` for details on what Phases 0–3 actually involved.
+See `DONE.md` for details on what Phases 0–4 actually involved.
 
 ---
 
@@ -59,6 +59,32 @@ square in the icon slot — no glyph, emoji, or photo. `DiscoveryListItem`'s
 renders there by default. Once the design defines what actually goes in that
 slot (food category icon? photo thumbnail?), wire the real default in
 (`packages/ui/src/components/DiscoveryListItem.tsx`).
+
+## Figma Code Connect mapping (Phase 4)
+
+Every Code Connect MCP tool (`add_code_connect_map`, `get_context_for_code_connect`,
+`get_code_connect_suggestions`) returned the same error for this Figma file:
+
+> You need a Dev or Full seat on an Organization or Enterprise plan to use
+> Code Connect.
+
+This is an account/plan-level restriction on the connected Figma
+account/team, not something fixable from the codebase — Code Connect
+(both publishing and even reading component properties for template
+generation) requires an Organization or Enterprise seat, which this file
+isn't on.
+
+Once the plan/seat is upgraded, the mapping is straightforward — component
+node IDs on the Components page (node `1:53`) are already known:
+
+- Button → `4:22` → `packages/ui/src/components/Button.tsx`
+- Input Field → `5:71` → `packages/ui/src/components/TextField.tsx`
+- Stat Tile → `5:11` → `packages/ui/src/components/StatTile.tsx`
+- Star Rating → `5:49` → `packages/ui/src/components/StarRating.tsx`
+- Discovery List Item → `5:54` → `packages/ui/src/components/DiscoveryListItem.tsx`
+- Progress Step Bar → `5:103` → `packages/ui/src/components/StepProgress.tsx`
+- Flow header row (Screens page, e.g. node `7:37`) → `packages/ui/src/components/FlowHeader.tsx`
+- Screens page (`1:54`) → `apps/foodie-web/src/components/ScreenShell.tsx` (app-level, not `@foodie/ui` — see note below)
 
 ## Sync workflow (build plan §2)
 

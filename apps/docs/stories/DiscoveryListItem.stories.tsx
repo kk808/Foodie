@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { DiscoveryListItem } from "@foodie/ui";
 
 const meta: Meta<typeof DiscoveryListItem> = {
-  title: "Pattern/DiscoveryListItem",
+  title: "Composite/DiscoveryListItem",
   component: DiscoveryListItem,
   argTypes: {
     iconColor: { control: "select", options: ["orange", "pink", "yellow", "green"] },
