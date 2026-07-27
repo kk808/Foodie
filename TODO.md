@@ -7,12 +7,12 @@
 - [x] Phase 2 — `@foodie/ui` primitives (Button, TextField) + Storybook live
 - [x] Phase 3 — Composite + pattern components (StatTile, StarRating, StepProgress, DiscoveryListItem)
 - [x] Phase 4 — Layout helpers (FlowHeader in `@foodie/ui`, ScreenShell in `foodie-web`); Code Connect mapping to Figma (mapping blocked — see below)
-- [ ] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
+- [x] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
 - [ ] Phase 6 — Steps 1–5 flow built, wired to local state
 - [ ] Phase 7 — Accessibility + visual regression hardening, v1.0 tag (still unpublished)
 - [ ] Trigger-based (not scheduled) — stand up private registry + Changesets publish job once app #2 needs `@foodie/ui`/`@foodie/tokens` externally
 
-See `DONE.md` for details on what Phases 0–4 actually involved.
+See `DONE.md` for details on what Phases 0–5 actually involved.
 
 ---
 

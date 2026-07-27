@@ -5,7 +5,12 @@ import type { HTMLAttributes, ReactNode } from "react";
  * is a 390px-wide mobile frame with `bg-bg-canvas` and 20px side padding.
  * What varies per screen is the vertical rhythm:
  * - Home (node 6:9): `pt-[60px]`, `gap-[20px]`, `items-start`
- * - Flow steps (e.g. node 7:36): `pt-[50px]`, `gap-[24px]`, `items-center`
+ * - Flow steps (e.g. node 7:36): `pt-[50px]`, `gap-[24px]` (`gap-xl`), `items-center`
+ *
+ * Home's 20px gap has no matching spacing token (the scale jumps from
+ * `lg` 16px to `xl` 24px), so it's a literal `gap-[20px]` rather than
+ * silently rounding to the nearest token — caught when actually wiring this
+ * into the Home page in Phase 5 (was wrongly `gap-lg` before that).
  *
  * This lives in `foodie-web`, not `@foodie/ui` — it's the app's page-frame
  * shell (viewport width, route-level background), not a reusable
@@ -17,7 +22,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 export type ScreenShellVariant = "home" | "flow";
 
 const variantClasses: Record<ScreenShellVariant, string> = {
-  home: "pt-[60px] gap-lg items-start",
+  home: "pt-[60px] gap-[20px] items-start",
   flow: "pt-[50px] gap-xl items-center",
 };
 
