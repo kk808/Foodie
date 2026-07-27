@@ -1,0 +1,38 @@
+{
+  "name": "@foodie/ui",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "dependencies": {
+    "@foodie/tokens": "workspace:*",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "@foodie/config": "workspace:*",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.3.0",
+    "typescript": "^6.0.0",
+    "vitest": "^2.1.0"
+  }
+}

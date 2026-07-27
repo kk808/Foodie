@@ -1,0 +1,12 @@
+node_modules
+.turbo
+dist
+.next
+out
+storybook-static
+.env
+.env.local
+*.log
+.DS_Store
+_tmp_*
+**/_tmp_*

@@ -1,0 +1,17 @@
+{
+  "name": "@foodie/config",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "tailwind.config.ts",
+    "tsconfig.base.json",
+    "eslint-preset.js"
+  ],
+  "dependencies": {
+    "@foodie/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
