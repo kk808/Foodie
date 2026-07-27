@@ -8,6 +8,7 @@ const config: Partial<Config> = {
       spacing: theme.spacing,
       borderRadius: theme.borderRadius,
       boxShadow: theme.boxShadow,
+      fontFamily: theme.fontFamily,
     },
   },
 };

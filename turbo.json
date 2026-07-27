@@ -7,6 +7,7 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "storybook-static/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
@@ -20,6 +21,7 @@
       "dependsOn": ["^build"]
     },
     "storybook": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     }

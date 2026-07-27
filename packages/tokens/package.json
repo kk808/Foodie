@@ -7,12 +7,14 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
     "./css": "./dist/tokens.css",
     "./tailwind-theme": {
       "types": "./dist/tailwind-theme.d.ts",
-      "default": "./dist/tailwind-theme.js"
+      "import": "./dist/tailwind-theme.mjs",
+      "require": "./dist/tailwind-theme.js"
     }
   },
   "scripts": {
