@@ -1,0 +1,34 @@
+{
+  "color": {
+    "bg": {
+      "canvas": { "value": "{color.cream.50.value}" },
+      "surface": { "value": "{color.white.value}" }
+    },
+    "text": {
+      "primary": { "value": "{color.charcoal.900.value}" },
+      "secondary": { "value": "{color.charcoal.500.value}" },
+      "inverse": { "value": "{color.white.value}" }
+    },
+    "brand": {
+      "primary": { "value": "{color.teal.500.value}" },
+      "primary-hover": { "value": "{color.teal.600.value}" }
+    },
+    "accent": {
+      "orange": { "value": "{color.orange.500.value}" },
+      "orange-hover": { "value": "{color.orange.600.value}" },
+      "pink": { "value": "{color.pink.500.value}" },
+      "pink-hover": { "value": "{color.pink.600.value}" },
+      "yellow": { "value": "{color.yellow.500.value}" },
+      "yellow-hover": { "value": "{color.yellow.600.value}" },
+      "green": { "value": "{color.green.500.value}" },
+      "green-hover": { "value": "{color.green.600.value}" }
+    },
+    "border": {
+      "subtle": { "value": "{color.gray.100.value}" }
+    },
+    "rating": {
+      "star": { "value": "{color.gold.500.value}" }
+    },
+    "focus-ring": { "value": "{color.charcoal.600.value}" }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "color": {
+    "white": { "value": "#ffffff" },
+    "cream": {
+      "50": { "value": "#f9f8f6" }
+    },
+    "charcoal": {
+      "900": { "value": "#2d2a26" },
+      "600": { "value": "#575551" },
+      "500": { "value": "#8a8680" }
+    },
+    "teal": {
+      "500": { "value": "#43b1a8" },
+      "600": { "value": "#3b9c94" }
+    },
+    "orange": {
+      "500": { "value": "#faa026" },
+      "600": { "value": "#dc8d21" }
+    },
+    "pink": {
+      "500": { "value": "#f2427d" },
+      "600": { "value": "#d53a6e" }
+    },
+    "yellow": {
+      "500": { "value": "#ffd60a" },
+      "600": { "value": "#e0bc09" }
+    },
+    "green": {
+      "500": { "value": "#7cb342" },
+      "600": { "value": "#6d9e3a" }
+    },
+    "gold": {
+      "500": { "value": "#e9b94b" }
+    },
+    "gray": {
+      "100": { "value": "#eceae6" }
+    }
+  }
+}

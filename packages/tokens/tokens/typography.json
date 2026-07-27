@@ -1,0 +1,50 @@
+{
+  "fontFamily": {
+    "sans": { "value": "Inter, sans-serif" }
+  },
+  "typography": {
+    "heading": {
+      "xl": {
+        "fontSize": { "value": "24px" },
+        "fontWeight": { "value": "800" },
+        "lineHeight": { "value": "30px" }
+      },
+      "l": {
+        "fontSize": { "value": "20px" },
+        "fontWeight": { "value": "700" },
+        "lineHeight": { "value": "26px" }
+      },
+      "m": {
+        "fontSize": { "value": "16px" },
+        "fontWeight": { "value": "700" },
+        "lineHeight": { "value": "22px" }
+      }
+    },
+    "body": {
+      "regular": {
+        "fontSize": { "value": "15px" },
+        "fontWeight": { "value": "400" },
+        "lineHeight": { "value": "22px" }
+      },
+      "medium": {
+        "fontSize": { "value": "15px" },
+        "fontWeight": { "value": "500" },
+        "lineHeight": { "value": "22px" }
+      }
+    },
+    "label": {
+      "caption": {
+        "fontSize": { "value": "12px" },
+        "fontWeight": { "value": "400" },
+        "lineHeight": { "value": "16px" }
+      }
+    },
+    "button": {
+      "label": {
+        "fontSize": { "value": "16px" },
+        "fontWeight": { "value": "700" },
+        "lineHeight": { "value": "20px" }
+      }
+    }
+  }
+}

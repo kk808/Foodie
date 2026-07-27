@@ -16,8 +16,11 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "tokens:build": "style-dictionary build --config style-dictionary.config.js",
+    "build": "pnpm run tokens:build && tsup src/index.ts src/tailwind-theme.ts --format esm,cjs --dts",
+    "prelint": "pnpm run tokens:build",
     "lint": "eslint src",
+    "pretypecheck": "pnpm run tokens:build",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

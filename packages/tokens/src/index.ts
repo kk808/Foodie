@@ -1,8 +1,7 @@
-// Phase 0 placeholder. Phase 1 replaces this with generated output from the
-// Figma → Style Dictionary pipeline (build plan §2): CSS custom properties,
-// TypeScript constants, and a Tailwind theme extension, all derived from the
-// Figma Variables (Primitives, Color, Spacing, Radius collections).
+// Generated from the Foodie App Design System Figma file (Foundations page)
+// via Style Dictionary — see ../style-dictionary.config.cjs and ../tokens/*.json.
+// Run `pnpm run tokens:build` (or `pnpm build`) to regenerate after a Figma sync.
+export * from "./generated/tokens.generated";
 
-export const tokens = {
-  // populated by the Style Dictionary build in Phase 1
-} as const;
+// Raw CSS custom properties are also emitted to dist/tokens.css and can be
+// imported directly by consuming apps via `@foodie/tokens/css`.
