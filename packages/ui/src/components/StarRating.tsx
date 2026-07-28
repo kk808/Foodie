@@ -4,18 +4,29 @@
  * asset (two variants: filled/empty) hosted on a temporary Figma URL — not
  * something to embed long-term, so this renders the star as inline SVG
  * instead, toggling fill via the `rating/star` token vs. `border/subtle`.
+ *
+ * `size` added in Phase 6: the flow's "How did you like it?" step (node
+ * 8:100) reuses this same component but at ~40px stars with an ~8px gap,
+ * not the 18px/4px used everywhere else (DiscoveryListItem). Defaults to
+ * "sm" so every existing call site is unaffected.
  */
+
+const starSizes = {
+  sm: { box: 18, gap: "gap-1" },
+  lg: { box: 40, gap: "gap-2" },
+} as const;
 
 type StarProps = {
   filled: boolean;
+  size: number;
 };
 
-function Star({ filled }: StarProps) {
+function Star({ filled, size }: StarProps) {
   return (
     <svg
       viewBox="0 0 18 18"
-      width="18"
-      height="18"
+      width={size}
+      height={size}
       aria-hidden="true"
       className={filled ? "text-rating-star" : "text-border-subtle"}
       fill="currentColor"
@@ -33,6 +44,8 @@ export type StarRatingProps = {
   /** Renders interactive buttons (one per star) instead of a static display. */
   onChange?: (rating: number) => void;
   readOnly?: boolean;
+  /** "sm" (18px, default — DiscoveryListItem) or "lg" (40px — flow rating input). */
+  size?: keyof typeof starSizes;
   className?: string;
 };
 
@@ -41,20 +54,22 @@ export function StarRating({
   totalStars = 5,
   onChange,
   readOnly = !onChange,
+  size = "sm",
   className,
 }: StarRatingProps) {
   const stars = Array.from({ length: totalStars }, (_, i) => i + 1);
   const rounded = Math.max(0, Math.min(totalStars, Math.floor(rating)));
+  const { box, gap } = starSizes[size];
 
   if (readOnly) {
     return (
       <div
-        className={["flex gap-1 items-start", className].filter(Boolean).join(" ")}
+        className={[gap, "flex items-start", className].filter(Boolean).join(" ")}
         role="img"
         aria-label={`${rounded} out of ${totalStars} stars`}
       >
         {stars.map((n) => (
-          <Star key={n} filled={n <= rounded} />
+          <Star key={n} filled={n <= rounded} size={box} />
         ))}
       </div>
     );
@@ -62,7 +77,7 @@ export function StarRating({
 
   return (
     <div
-      className={["flex gap-1 items-start", className].filter(Boolean).join(" ")}
+      className={[gap, "flex items-start", className].filter(Boolean).join(" ")}
       role="radiogroup"
       aria-label="Rating"
     >
@@ -76,7 +91,7 @@ export function StarRating({
           onClick={() => onChange?.(n)}
           className="outline-none focus-visible:outline focus-visible:outline-[2px] focus-visible:outline-focus-ring rounded-sm"
         >
-          <Star filled={n <= rounded} />
+          <Star filled={n <= rounded} size={box} />
         </button>
       ))}
     </div>

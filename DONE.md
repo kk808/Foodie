@@ -108,6 +108,89 @@ from this repo. The intended mapping (component → Figma node) is recorded in
 - `apps/foodie-web/src/app/layout.tsx`: `<body>` now gets `min-h-screen bg-bg-canvas` so the canvas background covers the full viewport outside the 390px frame too, not just inside `ScreenShell`.
 - Verified clean: full workspace build (including `next build`'s static prerender of `/`), typecheck, lint, and all 19 `@foodie/ui` tests, from a fresh `/tmp` scratch copy. Also started the real `next dev` server and fetched the rendered HTML to confirm the actual DOM output — every expected class and piece of content (spacing tokens, star SVGs, discovery items, button label) is present exactly as built, not just "looks right in the editor."
 
+## Phase 6 — Flow steps + local state
+
+Pulled the Screens page's 5 step frames from Figma before writing any code —
+metadata first (`get_metadata` on `1:54`, which had already surfaced the
+frames as `7:36`/`8:56`/`8:72`/`8:89`/`9:67` from Phase 4's node-guessing),
+then `get_design_context` on each frame individually to get exact copy,
+colors, and field behavior (Step 2's Next button ships in a disabled/50%-
+opacity default state; Step 3/5 are explicitly optional/skippable per their
+own caption text).
+
+- One route (`apps/foodie-web/src/app/log/page.tsx`, client component) holds
+  all 5 steps as local `useState` — a single in-progress `FoodEntry` object
+  (`photo`/`name`/`location`/`rating`/`notes`) threaded through by step
+  index, not 5 separate Next.js routes. Nothing in this flow needs to be
+  deep-linkable, so a URL- or store-backed approach would've been
+  unnecessary complexity.
+- Each step is its own presentational component in
+  `apps/foodie-web/src/components/flow/` (`Step1SnapPhoto`, `Step2Name`,
+  `Step3Location`, `Step4Rating`, `Step5Notes`), taking only the props it
+  needs and calling back up to `page.tsx` to advance. `page.tsx` renders the
+  shared `FlowHeader` + `ScreenShell` chrome once and swaps in the active
+  step's content.
+- Step 1: a hidden `<input type="file">` behind both the dashed drop-zone
+  and the "Choose Photo" button; the picked file is read via `FileReader`
+  into a data URL (no real upload backend exists) and immediately advances
+  to Step 2 — Figma has no "photo selected" state on this frame, the
+  transition is instant.
+- Step 2: previews that photo in the rounded box Figma reserved for it
+  (node `8:67`, literal 10px radius — not a token value, same category of
+  one-off as the Home 20px gap from Phase 5); "Next →" is disabled until the
+  name field is non-empty, matching the 50%-opacity default state pulled
+  from Figma.
+- Step 3 (location) and Step 5 (notes) are both optional per their own
+  caption text — their buttons are never disabled.
+- Step 4's reaction caption ("😍 Love it!" etc.) only has one state defined
+  in Figma (5 stars → Love it); the other four rating→emoji mappings are a
+  small local addition so the control isn't visibly broken when the rating
+  actually changes.
+- Home's "+ Try Something New" button now calls `router.push("/log")`; the
+  close (✕) in every step's `FlowHeader` calls `router.push("/")`, discarding
+  the in-progress entry (Figma has no confirm-discard step, so none was
+  invented). `HomePage` picked up `"use client"` purely for this
+  `onClick`/`useRouter` — the rest of the page is unchanged static content.
+
+**Two real `@foodie/ui` bugs found and fixed while building this** (both were
+latent since Phase 2/3 — no prior screen had exercised the code paths that
+exposed them):
+
+- **`Button`'s text color was hardcoded to `text-inverse` (white) for every
+  color variant.** Pulling the actual Yellow (node `4:14`) and Green
+  (`4:18`) button variants for Steps 3 and 5 showed both use
+  `text-primary` (dark) instead — white text on a light yellow/green fill
+  fails contrast. Teal/Orange/Pink genuinely are white-text. Fixed by moving
+  text color into the per-color variant map instead of the shared base
+  classes (`packages/ui/src/components/Button.tsx`).
+- **`StarRating` had no way to render at the ~40px size Step 4's rating
+  input actually uses** — every existing call site (`DiscoveryListItem`)
+  needed the small 18px star. Added a `size?: "sm" | "lg"` prop (default
+  `"sm"`, so nothing existing changed) rather than inventing a second
+  component (`packages/ui/src/components/StarRating.tsx`).
+- Also generalized `ScreenShell`'s flow variant: Steps 2 and 5 (nodes
+  `8:56`/`9:67`) actually use a 20px vertical gap in Figma, not the 24px
+  every other flow step uses. Added a `gapPx` override (applied via inline
+  `style`, so it reliably wins over the variant's Tailwind `gap-xl` class)
+  rather than adding a third hardcoded variant.
+- Caught by lint (not by inspection): `Step1SnapPhoto.tsx` used the
+  `React.ChangeEvent` global-namespace form without importing `React` —
+  same class of bug as the Phase 2 `layout.tsx` miss, same fix (import the
+  type explicitly from `"react"`).
+
+No new vitest coverage was added this phase — the 5 step components live in
+`foodie-web` (no existing test setup there, unlike `@foodie/ui`) and are
+presentational; verified via the build/typecheck/lint pass and manually via
+`next dev` below instead. Adding real tests for them (disabled Next-button
+gating, the file-input → preview flow) would be reasonable Phase 7 scope.
+
+Full verification (install → build → typecheck → lint → test, all 6
+workspace packages, from a fresh `/tmp` scratch copy) passed clean, plus
+started a real `next dev` server and fetched both `/` and `/log`'s rendered
+HTML to confirm actual DOM output (Home content unchanged; Step 1's
+drop-zone, "Choose Photo" button, and "Step 1 of 5" caption all present
+exactly as built).
+
 ## Notes on verification process
 
 The mounted project folder (`D:\wh\github\Foodie`) is on a filesystem that doesn't support the file operations `pnpm install` needs (FUSE mount, fails on `unlink`). All installs/builds were verified by copying the repo to `/tmp` in the sandbox, running `pnpm install && pnpm build` there, then copying corrected source back — never node_modules/dist. If build issues show up in a future session, this is why: verification happens in a scratch copy, not the mounted folder directly.

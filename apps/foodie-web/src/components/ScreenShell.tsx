@@ -12,6 +12,14 @@ import type { HTMLAttributes, ReactNode } from "react";
  * silently rounding to the nearest token — caught when actually wiring this
  * into the Home page in Phase 5 (was wrongly `gap-lg` before that).
  *
+ * Phase 6 turned up the same thing again, this time *within* the flow
+ * variant: Steps 1/3/4 (nodes 7:36/8:72/8:89) use the expected 24px gap, but
+ * Steps 2 and 5 (nodes 8:56/9:67) actually use 20px in Figma. Rather than
+ * pick a variant per exact gap value, `gapPx` lets a screen override the
+ * variant default for its actual frame — set via inline `style` so it
+ * always wins over the variant's Tailwind `gap-*` class regardless of
+ * stylesheet ordering.
+ *
  * This lives in `foodie-web`, not `@foodie/ui` — it's the app's page-frame
  * shell (viewport width, route-level background), not a reusable
  * design-system primitive another app would want. `FlowHeader` stays in
@@ -29,12 +37,16 @@ const variantClasses: Record<ScreenShellVariant, string> = {
 export type ScreenShellProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
   variant?: ScreenShellVariant;
+  /** Override the variant's default vertical gap in px (see Steps 2/5 note above). */
+  gapPx?: number;
 };
 
 export function ScreenShell({
   children,
   variant = "flow",
+  gapPx,
   className,
+  style,
   ...props
 }: ScreenShellProps) {
   return (
@@ -47,6 +59,7 @@ export function ScreenShell({
       ]
         .filter(Boolean)
         .join(" ")}
+      style={gapPx !== undefined ? { gap: `${gapPx}px`, ...style } : style}
       {...props}
     >
       {children}

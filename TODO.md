@@ -8,7 +8,7 @@
 - [x] Phase 3 — Composite + pattern components (StatTile, StarRating, StepProgress, DiscoveryListItem)
 - [x] Phase 4 — Layout helpers (FlowHeader in `@foodie/ui`, ScreenShell in `foodie-web`); Code Connect mapping to Figma (mapping blocked — see below)
 - [x] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
-- [ ] Phase 6 — Steps 1–5 flow built, wired to local state
+- [x] Phase 6 — Steps 1–5 flow built, wired to local state
 - [ ] Phase 7 — Accessibility + visual regression hardening, v1.0 tag (still unpublished)
 - [ ] Trigger-based (not scheduled) — stand up private registry + Changesets publish job once app #2 needs `@foodie/ui`/`@foodie/tokens` externally
 
@@ -85,6 +85,23 @@ node IDs on the Components page (node `1:53`) are already known:
 - Progress Step Bar → `5:103` → `packages/ui/src/components/StepProgress.tsx`
 - Flow header row (Screens page, e.g. node `7:37`) → `packages/ui/src/components/FlowHeader.tsx`
 - Screens page (`1:54`) → `apps/foodie-web/src/components/ScreenShell.tsx` (app-level, not `@foodie/ui` — see note below)
+
+## Home not wired to saved flow entries (Phase 6)
+
+`/log`'s final step (`Step5Notes`) `console.log`s the completed `FoodEntry`
+and redirects to `/`, but Home's stats (`47`/`8`/`🍕`) and the two
+Discovery List Items are still Phase 5's static demo content — nothing
+persists a saved entry yet (no store, no backend). Wire this up once there's
+an actual data layer to write to; out of scope for "build the flow" itself.
+
+## Textarea design-system gap (Phase 6)
+
+Step 5's notes field (`apps/foodie-web/src/components/flow/Step5Notes.tsx`)
+is a hand-styled `<textarea>`, not a `@foodie/ui` component — Figma's node
+(`9:80`) is a bespoke yellow-bordered Frame, not an "Input Field" instance,
+so there was nothing to reuse from `TextField`. If a second multi-line text
+input ever shows up in the design, promote this to a proper `@foodie/ui`
+`TextArea` instead of copy-pasting the local styling again.
 
 ## Sync workflow (build plan §2)
 

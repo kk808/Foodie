@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import {
   Typography,
   StatTile,
@@ -9,10 +12,14 @@ import { ScreenShell } from "@/components/ScreenShell";
 /**
  * Home screen, matching the Figma Screens page (node 6:9) — built entirely
  * from `@foodie/ui` components plus the app-local `ScreenShell` frame
- * (Phase 4). No interactivity wired yet (the "+ Try Something New" button
- * has no `onClick`) — that lands in Phase 6 alongside the flow steps.
+ * (Phase 4). "+ Try Something New" now opens the Phase 6 flow at `/log`.
+ * A client component purely because of that `onClick`/`useRouter` — the
+ * rest of the page is still static demo content (stats/discoveries aren't
+ * wired to the flow's saved entries yet, see TODO.md).
  */
 export default function HomePage() {
+  const router = useRouter();
+
   return (
     <ScreenShell variant="home">
       <div className="flex w-full flex-col items-center gap-[6px]">
@@ -34,7 +41,7 @@ export default function HomePage() {
         <DiscoveryListItem name="Ramen" rating={5} date="20 Jul" />
       </div>
 
-      <Button color="teal" className="w-full">
+      <Button color="teal" className="w-full" onClick={() => router.push("/log")}>
         + Try Something New
       </Button>
 
