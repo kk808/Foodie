@@ -10,6 +10,9 @@ import { Button, Typography } from "@foodie/ui";
  * it's a multi-line textarea rather than a single-line input. Styled
  * locally here rather than added to `@foodie/ui` since Figma treats it as
  * bespoke to this one screen, not a reusable design-system input variant.
+ *
+ * Phase 7: `aria-describedby` links the "(optional—you can skip!)" caption
+ * to the textarea, same reasoning as Step 3's location field.
  */
 export type Step5NotesProps = {
   notes: string;
@@ -26,7 +29,7 @@ export function Step5Notes({ notes, onNotesChange, onSave }: Step5NotesProps) {
         💭
       </span>
 
-      <Typography variant="label-caption" color="secondary">
+      <Typography variant="label-caption" color="secondary" id="notes-hint">
         (optional—you can skip!)
       </Typography>
 
@@ -35,6 +38,7 @@ export function Step5Notes({ notes, onNotesChange, onSave }: Step5NotesProps) {
         onChange={(event) => onNotesChange(event.target.value)}
         placeholder="e.g., 'So yummy!' or 'Want to try again at a different restaurant!'"
         aria-label="Any thoughts?"
+        aria-describedby="notes-hint"
         rows={3}
         className={[
           "h-[90px] w-full resize-none rounded-md border-2 border-solid border-accent-yellow bg-bg-surface",

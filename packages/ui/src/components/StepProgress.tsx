@@ -3,6 +3,14 @@
  * 5:103): a row of 5 segments, 36x6px each, 4px gap. Segments up to and
  * including `currentStep` are filled (`brand-primary`); the rest are
  * `border-subtle`.
+ *
+ * `aria-label` added in Phase 7: an automated axe check (`aria-progressbar-
+ * name`) caught that `role="progressbar"` had no accessible name — a
+ * screen reader had nothing to announce beyond "progress bar, 2 of 5" with
+ * no indication of *what* was progressing. `FlowHeader` already renders a
+ * visible "Step X of Y" caption right after this, but that text wasn't
+ * programmatically associated with the bar, so the bar needed its own
+ * self-sufficient label regardless of what wraps it.
  */
 export type StepProgressProps = {
   /** 1-based current step. */
@@ -27,6 +35,7 @@ export function StepProgress({
       aria-valuenow={currentStep}
       aria-valuemin={1}
       aria-valuemax={totalSteps}
+      aria-label={`Step ${currentStep} of ${totalSteps}`}
     >
       {steps.map((step) => (
         <div

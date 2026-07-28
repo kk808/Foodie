@@ -191,6 +191,96 @@ HTML to confirm actual DOM output (Home content unchanged; Step 1's
 drop-zone, "Choose Photo" button, and "Step 1 of 5" caption all present
 exactly as built).
 
+## Phase 7 — Accessibility hardening + visual regression (v1.0 still not tagged — user's call)
+
+Two independent tracks: fix real accessibility issues, and stand up tooling
+to catch future visual regressions.
+
+**Automated a11y tests, `@foodie/ui`.** Added `jest-axe` to the existing
+vitest suite (`src/test/axe-setup.ts` registers `toHaveNoViolations` via
+`expect.extend`; `src/test/axe-matchers.d.ts` augments vitest's own
+`Assertion` interface since `@types/jest-axe` only augments Jest's, and
+vitest's `expect` doesn't inherit those ambient types even though the
+matcher works fine at runtime). New `a11y.test.tsx` runs `axe` against every
+component and several key states (Button per color + disabled, TextField
+with a label and in its error state, all 7 Typography variants, StarRating
+read-only/interactive/large, StepProgress, DiscoveryListItem, FlowHeader).
+`color-contrast` and the document-level rules (`region`,
+`landmark-one-main`, `page-has-heading-one`, `html-has-lang`) are disabled
+in the axe config — jsdom renders these with Tailwind utility *classes* but
+no compiled stylesheet, so there's no real computed color for axe to check,
+and document-level rules don't apply to a component mounted in isolation
+with no surrounding page. Contrast was checked separately, directly against
+token hex values (see below), which is the accurate place to do it for
+components built entirely from tokens.
+
+**Real bug caught by the new tests:** `StepProgress`'s `role="progressbar"`
+had no accessible name (`aria-progressbar-name` violation) — added
+`aria-label={\`Step ${currentStep} of ${totalSteps}\`}`. `FlowHeader`
+already renders a visible "Step X of Y" caption right next to the bar, but
+that text was never programmatically associated with it, so a screen
+reader had nothing to announce beyond "progress bar, 2 of 5" with no
+context. Fixed in the component itself so it's self-sufficient regardless
+of what wraps it.
+
+**Color contrast, checked directly against `packages/tokens/tokens/*.json`
+hex values** (a Python script computing WCAG relative luminance/contrast
+ratios — jsdom can't do this, see above):
+
+- `text/secondary` (`charcoal-500`, `#8a8680`) only hit 3.41–3.62:1 against
+  `bg-canvas`/`bg-surface` — fails AA's 4.5:1 for normal text, and it's used
+  everywhere (`label-caption`, `body-regular` secondary, TextField
+  placeholders). Fixed by re-aliasing the semantic token to `charcoal-600`
+  (`#575551`, 7.01–7.44:1) — already an approved primitive in the palette
+  (previously only used for `focus-ring`), not a new color, so safe to
+  change without design sign-off the way the sync-workflow note (build plan
+  §2) means for genuinely new values.
+- Several other failures were found but **not** fixed — white button text
+  on Teal/Orange/Pink, the rating star's low contrast against its own empty
+  state, `border-subtle`'s contrast against white — because they're core
+  brand-color decisions, not incidental values. Recorded in TODO.md for
+  whoever owns the palette rather than changed unilaterally.
+
+**Accessibility pass, `foodie-web` flow + Home.** Added `aria-describedby`
+linking the "(optional—...)" captions to their fields in Step 3 (location)
+and Step 5 (notes) — the caption was already visible right above the
+field, but nothing told a screen reader user the field could be skipped
+before this. Reviewed focus order, labels, and keyboard reachability across
+Home and all 5 steps; no other issues found (Step 1's file input is
+`hidden` and only reachable via its two visible trigger buttons, which is
+intentional).
+
+**Visual regression, `apps/docs/visual-regression/`.** A ~150-line script
+(`run.mjs`, not `@storybook/test-runner` — pinning a version compatible
+with Storybook 10.5 wasn't verified here, and a small script has less to go
+stale) that serves the built `storybook-static` output, screenshots every
+story's root with Playwright Chromium, and diffs against a baseline PNG
+using `pixelmatch`. Wired into `package.json` (`test:visual`,
+`test:visual:update`) and `turbo.json`.
+
+This sandbox's network allowlist blocks `cdn.playwright.dev`
+(`playwright install chromium` returns 403), so the script itself was only
+verified up to the point of needing a real browser (story index parsed,
+static server served `iframe.html` correctly, clean Playwright error when
+the binary is missing). The user then ran `test:visual:update` themselves
+somewhere with real network access — **21 baseline PNGs now exist in
+`apps/docs/visual-regression/baselines/`**, one per story across all 8
+component stories files plus the Foundations overview page. Spot-checked a
+few of the committed images directly: `primitives-button--all-colors.png`
+shows the Phase 6 text-color fix (white on Teal/Orange/Pink, dark on
+Yellow/Green); `composite-flowheader--with-close.png` and the star-rating
+baselines reflect the Phase 7 `text/secondary` re-alias. `pnpm test:visual`
+now has something real to diff against going forward — still couldn't be
+executed end-to-end from this sandbox (same Chromium-install block), so the
+next person to run it here will hit the same wall until it's run somewhere
+with network access, but the baselines themselves are in and committed.
+
+Full verification (install → build → typecheck → lint → test, all 6
+workspace packages, from a fresh `/tmp` scratch copy) passed clean,
+including the new a11y suite (27 `@foodie/ui` tests total, up from 19).
+`next dev` re-checked on both `/` and `/log` after the `text/secondary`
+token change to confirm nothing broke visually.
+
 ## Notes on verification process
 
 The mounted project folder (`D:\wh\github\Foodie`) is on a filesystem that doesn't support the file operations `pnpm install` needs (FUSE mount, fails on `unlink`). All installs/builds were verified by copying the repo to `/tmp` in the sandbox, running `pnpm install && pnpm build` there, then copying corrected source back — never node_modules/dist. If build issues show up in a future session, this is why: verification happens in a scratch copy, not the mounted folder directly.

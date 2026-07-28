@@ -6,7 +6,7 @@
     },
     "text": {
       "primary": { "value": "{color.charcoal.900.value}" },
-      "secondary": { "value": "{color.charcoal.500.value}" },
+      "secondary": { "value": "{color.charcoal.600.value}" },
       "inverse": { "value": "{color.white.value}" }
     },
     "brand": {

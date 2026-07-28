@@ -24,6 +24,10 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "test:visual": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

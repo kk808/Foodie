@@ -12,7 +12,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "storybook": "turbo run storybook --filter=@foodie/docs"
+    "storybook": "turbo run storybook --filter=@foodie/docs",
+    "test:visual": "turbo run test:visual --filter=@foodie/docs",
+    "test:visual:update": "turbo run build --filter=@foodie/docs && pnpm --filter @foodie/docs run test:visual:update"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

@@ -11,3 +11,4 @@ storybook-static
 _tmp_*
 **/_tmp_*
 packages/tokens/src/generated
+apps/docs/visual-regression/__diffs__

@@ -9,7 +9,7 @@
 - [x] Phase 4 — Layout helpers (FlowHeader in `@foodie/ui`, ScreenShell in `foodie-web`); Code Connect mapping to Figma (mapping blocked — see below)
 - [x] Phase 5 — `foodie-web` scaffold (Next.js), Home screen built from library
 - [x] Phase 6 — Steps 1–5 flow built, wired to local state
-- [ ] Phase 7 — Accessibility + visual regression hardening, v1.0 tag (still unpublished)
+- [x] Phase 7 — Accessibility hardening + visual regression baselines generated and committed (21 stories, `apps/docs/visual-regression/baselines/`)
 - [ ] Trigger-based (not scheduled) — stand up private registry + Changesets publish job once app #2 needs `@foodie/ui`/`@foodie/tokens` externally
 
 See `DONE.md` for details on what Phases 0–5 actually involved.
@@ -102,6 +102,31 @@ is a hand-styled `<textarea>`, not a `@foodie/ui` component — Figma's node
 so there was nothing to reuse from `TextField`. If a second multi-line text
 input ever shows up in the design, promote this to a proper `@foodie/ui`
 `TextArea` instead of copy-pasting the local styling again.
+
+## Button/StatTile contrast on brand colors (Phase 7 finding, not fixed)
+
+Computing WCAG contrast ratios directly against the token hex values found
+several button/text combinations that fail AA's 4.5:1 for normal text:
+
+- White button label text on Teal (`brand-primary`, 2.59:1) and Orange
+  (`accent-orange`, 2.07:1) — both well under 4.5:1
+- White button label text on Pink (`accent-pink`, 3.59:1) — also under
+- Filled rating star (`rating-star`, gold) against its own empty-star color
+  (`border-subtle`) is only 1.52:1 — the two states are hard to tell apart
+  by color alone for low-vision users
+- `border-subtle` against `bg-surface` (white) is 1.20:1, well under the
+  3:1 required for UI-component boundaries (TextField's default border)
+
+Not changed here: these are core brand colors (Teal is literally
+`brand-primary`) and the accent palette, not incidental values — changing
+them is a design decision needing sign-off, same reasoning as the sync
+workflow note below ("never auto-merge color changes, they need eyes").
+Yellow and Green buttons are fine (10.11:1 and 5.70:1 with dark text, the
+Phase 6 fix). Flagging here for whoever owns the palette; the two
+`@foodie/tokens` semantic-token fixes made this phase (`text/secondary`
+re-aliased from `charcoal-500` to `charcoal-600`, 3.4–3.6:1 → 7.0–7.4:1)
+were safe to make unilaterally because they reused an already-approved
+primitive from the same palette instead of picking a new color.
 
 ## Sync workflow (build plan §2)
 
