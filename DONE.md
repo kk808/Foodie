@@ -241,6 +241,24 @@ ratios — jsdom can't do this, see above):
   brand-color decisions, not incidental values. Recorded in TODO.md for
   whoever owns the palette rather than changed unilaterally.
 
+**Pushed the `text/secondary` fix back to Figma, on request.** Used the
+Figma MCP's `use_figma` tool to inspect the live variable graph
+(`figma.variables.getLocalVariableCollectionsAsync()`) and found
+`color/text/secondary` (`VariableID:1:21`) was a `VARIABLE_ALIAS` to
+`color/charcoal-500`. Re-aliased it to `color/charcoal-700`
+(`VariableID:23:2`) — the exact same primitive `color/focus/ring` already
+points to, not a newly invented color — then confirmed via
+`get_variable_defs` that the variable now resolves to `#575551`, matching
+`packages/tokens`'s value exactly. Design file and shipped code are no
+longer out of sync on this token. Surfaced a small pre-existing naming
+mismatch while in there: `packages/tokens`'s primitive `charcoal.600`
+(`#575551`) and Figma's `color/charcoal-700` were the same hex value under
+different names. On request, renamed the Figma variable (`VariableID:23:2`)
+from `color/charcoal-700` to `color/charcoal-600` to match — re-verified
+`color/text/secondary` and `color/focus/ring` (both bind to it by ID, not
+name) still resolve to `#575551` correctly after the rename. Value and name
+now match on both sides.
+
 **Accessibility pass, `foodie-web` flow + Home.** Added `aria-describedby`
 linking the "(optional—...)" captions to their fields in Step 3 (location)
 and Step 5 (notes) — the caption was already visible right above the

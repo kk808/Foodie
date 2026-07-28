@@ -122,11 +122,30 @@ Not changed here: these are core brand colors (Teal is literally
 them is a design decision needing sign-off, same reasoning as the sync
 workflow note below ("never auto-merge color changes, they need eyes").
 Yellow and Green buttons are fine (10.11:1 and 5.70:1 with dark text, the
-Phase 6 fix). Flagging here for whoever owns the palette; the two
-`@foodie/tokens` semantic-token fixes made this phase (`text/secondary`
-re-aliased from `charcoal-500` to `charcoal-600`, 3.4–3.6:1 → 7.0–7.4:1)
-were safe to make unilaterally because they reused an already-approved
-primitive from the same palette instead of picking a new color.
+Phase 6 fix). Flagging here for whoever owns the palette; the `text/secondary`
+fix (below) was safe to make unilaterally in a way these aren't, because it
+reused an already-approved primitive from the same palette instead of
+picking a new color.
+
+## `text/secondary` — code and Figma now back in sync (Phase 7)
+
+Fixed via the Figma MCP's `use_figma` tool: `color/text/secondary`
+(`VariableID:1:21`) was aliased to `color/charcoal-500` (3.4–3.6:1 contrast,
+fails AA); re-aliased it to the same darker primitive `color/focus/ring`
+already used (`VariableID:23:2`, 7.0–7.4:1), not a new color. Verified via
+`get_variable_defs` that it now resolves to `#575551`, matching
+`packages/tokens`'s `text/secondary` value exactly. That primitive was also
+renamed from `color/charcoal-700` to `color/charcoal-600` (below) to match
+`packages/tokens`'s naming, so both the value and the name now line up on
+both sides — no more divergence between the design file and the shipped
+app.
+
+Naming mismatch that turned up in the process (now resolved): what
+`packages/tokens/tokens/primitive.json` calls `charcoal.600` (`#575551`)
+was the same hex value Figma's variables panel called `color/charcoal-700`.
+Renamed the Figma variable (`VariableID:23:2`) to `color/charcoal-600` —
+verified `color/text/secondary` and `color/focus/ring` (both alias it by
+ID, not name) still resolve correctly after the rename.
 
 ## Sync workflow (build plan §2)
 
