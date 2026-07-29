@@ -4,7 +4,9 @@ Foodie is a food-discovery app, built **design-system-first**: every screen
 is assembled from a shared component library (`@foodie/ui`) that is itself
 built from design tokens (`@foodie/tokens`) pulled directly from Figma design.
 
-**Figma:** [Foodie App Design System](https://www.figma.com/design/TGPclDtmNDOvL2fdM0C0ML/)
+**Figma:** [Foodie App Design System](https://www.figma.com/design/TGPclDtmNDOvL2fdM0C0ML/Foodie-App-Design-System?node-id=1-52&p=f&t=8akwPNanhqgu6YUf-0)  
+**Foodie-web** https://foodie-collect.vercel.app/  
+**Foodie-docs** https://foodie-docs.vercel.app/?path=/story/foundations-overview--overview  
 
 ## Tech stack
 
